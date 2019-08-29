@@ -1,0 +1,45 @@
+const path = require('path')
+const program = require('commander')
+const ora = require('ora')
+const inquirer = require('inquirer')
+const rmrf = require('rimraf').sync
+const chalk = require('chalk')
+const exists = require('fs').existsSync
+const download = require('download-git-repo')
+
+program.parse(process.argv)
+
+const templateName = program.args[0] // cli-template
+const destination = program.args[1] || '.'
+const isPwd = destination === '.' || destination === './'
+
+if (isPwd || exists(path.resolve(destination))) {
+  inquirer.prompt([{
+    type: 'confirm',
+    message: isPwd
+      ? 'Generate project in current directory?'
+      : 'Target directory exists. Continue?',
+    name: 'ok'
+  }]).then(ans => {
+    if (ans.ok) downloadTemplate(templateName)
+  }).catch(err => {
+    console.log(chalk.red('error: ' + err.message))
+  })
+} else {
+  downloadTemplate(templateName)
+}
+
+function downloadTemplate (name) {
+  const spinner = ora('downloading template')
+  spinner.start()
+  if (exists(path.resolve(destination))) rmrf(path.resolve(destination))
+  download(`impeiran/${name}`, destination, { clone: false }, err => {
+    spinner.stop()
+    if (err) {
+      console.log(chalk.red('error: ' + err.message))
+      process.exit(1)
+      return
+    }
+    console.log(chalk.green('init template successfully !'))
+  })
+}

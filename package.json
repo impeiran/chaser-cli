@@ -1,0 +1,35 @@
+{
+  "name": "chaser-cli",
+  "version": "0.1.0",
+  "description": "CLI tool",
+  "main": "index.js",
+  "scripts": {
+    "test": "node bin/run"
+  },
+  "bin": {
+    "chaser": "bin/run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/impeiran/chaser-cli.git"
+  },
+  "keywords": [
+    "webpack",
+    "cli",
+    "javascript"
+  ],
+  "author": "chaser",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/impeiran/chaser-cli/issues"
+  },
+  "homepage": "https://github.com/impeiran/chaser-cli#readme",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "commander": "^3.0.0",
+    "download-git-repo": "^2.0.0",
+    "inquirer": "^7.0.0",
+    "ora": "^3.4.0",
+    "rimraf": "^3.0.0"
+  }
+}
