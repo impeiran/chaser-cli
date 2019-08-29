@@ -3,9 +3,9 @@ const program = require('commander')
 const ora = require('ora')
 const inquirer = require('inquirer')
 const rmrf = require('rimraf').sync
-const chalk = require('chalk')
 const exists = require('fs').existsSync
 const download = require('download-git-repo')
+const logger = require('../lib/log')
 
 program.parse(process.argv)
 
@@ -21,25 +21,26 @@ if (isPwd || exists(path.resolve(destination))) {
       : 'Target directory exists. Continue?',
     name: 'ok'
   }]).then(ans => {
-    if (ans.ok) downloadTemplate(templateName)
-  }).catch(err => {
-    console.log(chalk.red('error: ' + err.message))
-  })
+    if (ans.ok) downloadTemplate(templateName, destination)
+  }).catch(logger.error)
 } else {
   downloadTemplate(templateName)
 }
 
-function downloadTemplate (name) {
+/**
+ * download template into destination
+ * @param name {String} templateName
+ */
+function downloadTemplate (name, dest) {
   const spinner = ora('downloading template')
   spinner.start()
-  if (exists(path.resolve(destination))) rmrf(path.resolve(destination))
-  download(`impeiran/${name}`, destination, { clone: false }, err => {
+  if (exists(path.resolve(dest))) rmrf(path.resolve(dest))
+  download(`impeiran/${name}`, dest, { clone: false }, err => {
     spinner.stop()
     if (err) {
-      console.log(chalk.red('error: ' + err.message))
-      process.exit(1)
+      logger.error(err)
       return
     }
-    console.log(chalk.green('init template successfully !'))
+    logger.success('init template successfully !')
   })
 }
