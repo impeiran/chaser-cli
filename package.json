@@ -1,13 +1,14 @@
 {
   "name": "chaser-cli",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "CLI tool",
   "main": "index.js",
   "scripts": {
     "test": "node bin/chaser"
   },
   "bin": {
-    "chaser": "bin/chaser"
+    "chaser": "bin/chaser",
+    "chaser-init": "bin/chaser-init"
   },
   "repository": {
     "type": "git",
