@@ -2,45 +2,98 @@ const path = require('path')
 const program = require('commander')
 const ora = require('ora')
 const inquirer = require('inquirer')
-const rmrf = require('rimraf').sync
 const exists = require('fs').existsSync
-const download = require('download-git-repo')
+const fetchList = require('../lib/fetch-list')
+const gitUser = require('../lib/git-user')
+const generate = require('../lib/generate')
 const logger = require('../lib/log')
 
 program.parse(process.argv)
 
-const templateName = program.args[0] // cli-template
-const destination = program.args[1] || '.'
+const destination = program.args[0] || '.'
 const isPwd = destination === '.' || destination === './'
+const isDiy = false
 
-if (isPwd || exists(path.resolve(destination))) {
-  inquirer.prompt([{
+// required question items
+const questions = [
+  {
+    type: 'input',
+    message: 'Project name?',
+    name: 'name',
+    default: isPwd ? 'project' : destination
+  },
+  {
+    type: 'input',
+    message: 'Project description?',
+    name: 'description',
+    default: 'A project created by a CLI'
+  },
+  {
+    type: 'input',
+    message: 'Project Version',
+    name: 'version',
+    default: '0.1.0'
+  },
+  {
+    type: 'input',
+    message: 'Author',
+    name: 'author',
+    default: gitUser()
+  }
+]
+
+run()
+
+async function run () {
+    
+  if (!isDiy) {
+    // begin to fetch template list
+    const spinner = ora('fetching data ...')
+
+    let tpList = []
+    try {
+      spinner.start()
+      tpList = await fetchList()    
+      spinner.stop()
+    } catch (error) {
+      spinner.stop()
+      logger.error(error)
+      process.exit()
+    }
+
+    questions.unshift({
+      type: 'list',
+      message: 'Which template would u wanna choose?',
+      choices: tpList,
+      name: 'tp'
+    })
+  } else {
+    questions.unshift({
+      type: 'input',
+      message: 'Input template src?',
+      name: 'tp'
+    })
+  }
+
+  // check it is current directory or not
+  (isPwd || exists(path.resolve(destination))) && questions.unshift({
     type: 'confirm',
     message: isPwd
       ? 'Generate project in current directory?'
       : 'Target directory exists. Continue?',
-    name: 'ok'
-  }]).then(ans => {
-    if (ans.ok) downloadTemplate(templateName, destination)
-  }).catch(logger.error)
-} else {
-  downloadTemplate(templateName)
-}
+    name: 'genCur'
+  })
 
-/**
- * download template into destination
- * @param name {String} templateName
- */
-function downloadTemplate (name, dest) {
-  const spinner = ora('downloading template')
-  spinner.start()
-  if (exists(path.resolve(dest))) rmrf(path.resolve(dest))
-  download(`impeiran/${name}`, dest, { clone: false }, err => {
-    spinner.stop()
-    if (err) {
-      logger.error(err)
-      return
+  // ask questions
+  inquirer.prompt(questions).then(ans => {
+    if (!ans.tp) {
+      logger.error('End, no template')
+      process.exit()
     }
-    logger.success('init template successfully !')
+    generate({
+      dest: destination,
+      isDiy,
+      ...ans
+    })
   })
 }
