@@ -10,7 +10,7 @@
     <img alt="Maintenance" src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" target="_blank" />
   </a>
   <a href="https://github.com/impeiran/chaser-cli/blob/master/LICENSE">
-    <img alt="License: ISC" src="https://img.shields.io/badge/License-ISC-yellow.svg" target="_blank" />
+    <img alt="License: ISC" src="https://img.shields.io/badge/License-MIT-yellow.svg" target="_blank" />
   </a>
 </p>
 
@@ -75,7 +75,7 @@ Give a ⭐️ if this project helped you!
 
 #### 📝 License
 
-Copyright © 2019 [impeiran](https://github.com/impeiran). This project is [ISC](https://github.com/impeiran/chaser-cli/blob/master/LICENSE) licensed.
+Copyright © 2019 [impeiran](https://github.com/impeiran). This project is [MIT](https://github.com/impeiran/chaser-cli/blob/master/LICENSE) licensed.
 
 ***
 _This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
